@@ -7,6 +7,7 @@ import os
 import socket
 import threading
 
+import pafy
 import discord
 from discord.ext import commands
 from discordID import discordID
@@ -108,8 +109,6 @@ class BotWrapper(commands.Bot):
         if message.author == bot.user:
             return
 
-        message.content = message.content.lower()
-
         # Pouze Dotari dostavaji dota reference, pokud nadavaji/mluvi sproste
         rspnsList = curseRspnsList
         for role in message.author.roles:
@@ -120,7 +119,7 @@ class BotWrapper(commands.Bot):
         # Checkneme sprosta slova
         for word in cursesList:
             # Pokud se ve zprave nachazi sproste slovo, zasleme odpoved
-            if word in message.content:
+            if word in message.content.lower():
                 # Nekdy muzeme zaslat personalizovanou odpoved
                 if await self._check_responses(message, self.personalResponses):
                     break
@@ -167,22 +166,33 @@ class BotWrapper(commands.Bot):
         return False
 
 
-    def play(self, filename: str) -> None:
+    def play(self, num_or_url: str) -> None:
         if self.currentVoiceClient is None:
             return
 
         if self.currentVoiceClient.is_playing:
             self.currentVoiceClient.stop()
 
+        is_num = True
         try:
-            filename = audioDict[int(filename)]
+            # Number
+            num_or_url = audioDict[int(num_or_url)]
         except:
-            filename = filename
+            # Url
+            num_or_url = num_or_url
+            is_num     = False
 
-        print(f'\033[36m{strftime("%H:%M:%S", gmtime())} > {filename}\033[0m')
-        filename = f"{AUDIODIR}/{filename}"
+        print(f'\033[36m{strftime("%H:%M:%S", gmtime())} > {num_or_url}\033[0m')
 
-        self.currentVoiceClient.play(discord.FFmpegPCMAudio(filename))
+        # Numbers are files
+        if is_num:
+            source = f"{AUDIODIR}/{num_or_url}"
+        # Everything else is a url
+        else:
+            audio = pafy.new(num_or_url)
+            source = audio.getbestaudio()
+
+        self.currentVoiceClient.play(discord.FFmpegPCMAudio(source.url))
 
 
     def socket_server(self) -> None:
