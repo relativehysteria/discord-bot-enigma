@@ -108,8 +108,6 @@ class BotWrapper(commands.Bot):
         if message.author == bot.user:
             return
 
-        message.content = message.content.lower()
-
         # Pouze Dotari dostavaji dota reference, pokud nadavaji/mluvi sproste
         rspnsList = curseRspnsList
         for role in message.author.roles:
@@ -120,7 +118,7 @@ class BotWrapper(commands.Bot):
         # Checkneme sprosta slova
         for word in cursesList:
             # Pokud se ve zprave nachazi sproste slovo, zasleme odpoved
-            if word in message.content:
+            if word in message.content.lower():
                 # Nekdy muzeme zaslat personalizovanou odpoved
                 if await self._check_responses(message, self.personalResponses):
                     break
