@@ -17,7 +17,8 @@ PREFIX     = commands.when_mentioned_or("bota ")
 DESC       = "Zeus, ult now!"
 PICDIR     = "pics"
 AUDIODIR   = "audio"
-TXTDIR     = "txt"
+HLASKYPATH = "txt/hlasky"
+REJOINPATH = "txt/rejoin"
 FILEEXT    = "||"
 ADMIN_ID   = [discordID["Ruziro"], discordID["Dement"]]
 NEWLINE    = "NEWLINE"
@@ -57,7 +58,7 @@ def _get_dict(directory):
     return getDict
 
 
-def _format_audio() -> str:
+def _format_audio(audioDict: dict) -> str:
     """
     Naformatuje hodnotu vracenou z `_get_dict()` tak, aby to bylo citelne.
     Pouziva to `bota naga`
@@ -75,6 +76,10 @@ class BotWrapper(commands.Bot):
     # Trackuje botuv VC (muze byt vzdy pripojen pouze do jednoho VC najednou)
     currentVoiceClient  = None
 
+    hlaskyList = _get_list(f"{HLASKYPATH}")
+    rejoinList = _get_list(f"{REJOINPATH}")
+    audioDict  = _get_dict(f"{AUDIODIR}")
+
     async def on_message(self, message):
         # Nezajimame se o boty
         if message.author.bot:
@@ -90,7 +95,7 @@ class BotWrapper(commands.Bot):
             self.currentVoiceClient.stop()
 
         try:
-            filename = audioDict[int(filename)]
+            filename = self.audioDict[int(filename)]
         except:
             filename = filename
 
@@ -134,13 +139,6 @@ class BotWrapper(commands.Bot):
 
 
 ## GLOBAL SPACE ################################################################
-_hlaskyFName         = f"{TXTDIR}/hlasky"
-_rejoinFName         = f"{TXTDIR}/rejoin"
-
-hlaskyList = _get_list(_hlaskyFName)
-rejoinList = _get_list(_rejoinFName)
-
-audioDict  = _get_dict(f"{AUDIODIR}")
 
 activity = discord.Game("Techies mid")
 bot = BotWrapper(command_prefix=PREFIX, description=DESC, activity=activity)
@@ -150,11 +148,11 @@ bot = BotWrapper(command_prefix=PREFIX, description=DESC, activity=activity)
 @bot.event
 async def on_connect():
     print("Startup latency: {}ms\n".format(int(bot.latency * 1000)))
-    print(f"hlaskyList:         {len(hlaskyList)}")
-    print(f"rejoinList:         {len(rejoinList)}")
-    print(f"audioDict:          {len(audioDict)}")
+    print(f"hlaskyList:         {len(bot.hlaskyList)}")
+    print(f"rejoinList:         {len(bot.rejoinList)}")
+    print(f"audioDict:          {len(bot.audioDict)}")
     print("\nAUDIO:")
-    print("  " + _format_audio().replace("\n", "\n  "))
+    print("  " + _format_audio(bot.audioDict).replace("\n", "\n  "))
 
 @bot.event
 async def on_ready():
@@ -168,7 +166,7 @@ async def wtf(context):
     """
     Ukáže humor
     """
-    msg = choice(hlaskyList)
+    msg = choice(bot.hlaskyList)
     msg = msg.replace(NEWLINE, "\n")
 
     # Pokud se ve zprave nachazi `FILEEXT`, tak posleme nejaky soubor
@@ -187,8 +185,7 @@ async def count(context):
     """
     Spočítá humor
     """
-    global hlaskyList
-    await context.send(str(len(hlaskyList)))
+    await context.send(str(len(bot.hlaskyList)))
 
 @bot.command()
 async def gank(context, *args):
@@ -210,7 +207,7 @@ async def gank(context, *args):
 
     # Bot se nesmi jiz nachazet v nejakem voice chatu
     if bot.currentVoiceClient is not None:
-        await context.send(choice(rejoinList))
+        await context.send(choice(bot.rejoinList))
         return
 
     bot.currentVoiceClient  = await voiceChannel.connect()
@@ -224,7 +221,7 @@ async def naga(context, *args):
     if len(args) == 0:
         message  = "Příklad: `bota naga 3`\n"
         message +=  '```\n'
-        message += _format_audio()
+        message += _format_audio(bot.audioDict)
         message += '```'
 
         await context.send(message)
