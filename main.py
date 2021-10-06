@@ -12,8 +12,7 @@ from utils import format_audio
 from settings import *
 
 
-activity = discord.Game("Techies mid")
-bot = BotWrapper(command_prefix=PREFIX, description=DESC, activity=activity)
+bot = BotWrapper(command_prefix=PREFIX, description=DESC, activity=ACTIVITY)
 
 
 @bot.event
