@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from random import choice
-from random import randint
 from time import gmtime
 from time import strftime
 import os
@@ -12,9 +11,6 @@ from discord.ext import commands
 from discordID import discordID
 
 ## SETTINGS ####################################################################
-
-# Sance na vlastni response na sproste slovo; cim vetsi rngMax, tim mensi sance
-rngMax = 12
 
 # Bot nastaveni
 PREFIX     = commands.when_mentioned_or("bota ")
@@ -76,93 +72,14 @@ def _format_audio() -> str:
 ## BOT #########################################################################
 
 class BotWrapper(commands.Bot):
-    personalResponses = [
-        # [ ID, zprava, soubor ]
-        [discordID["Matej"], None, f"{PICDIR}/roshan.png"],
-
-        [discordID["Maruks"], "https://cdn.discordapp.com/attachments/804833942900572190/820465656461393982/marek_pugna.mp4", None],
-        [discordID["Maruks"], "https://www.youtube.com/watch?v=I1n-fFgM3qY", None],
-
-        [discordID["Kamiru"], "Obouruční řemdih", f"{PICDIR}/centaur.png"],
-
-        [discordID["Poblion"], None, f"{PICDIR}/umyvadlo.png"],
-
-        [discordID["Ruziro"], "Micro king lol", f"{PICDIR}/aegis_denied.png"],
-
-        [discordID["Oliver"], "Pěknej rampage", f"{PICDIR}/lina_rampage.png"],
-        [discordID["Oliver"], None, f"{PICDIR}/sven_rampage.png"],
-
-        [discordID["Dement"], "https://cdn.discordapp.com/attachments/804833942900572190/820360799507185664/megnas_courier.mp4", None],
-        [discordID["Dement"], "https://cdn.discordapp.com/attachments/804833942900572190/820360812371640340/megnas_laning.mp4", None],
-        [discordID["Dement"], "https://cdn.discordapp.com/attachments/804833942900572190/820360831123324938/megnas_stacks.mp4", None],
-        [discordID["Dement"], "Tohle ti půjde na mid", f"{PICDIR}/invoker.png"],
-
-        [discordID["Parecek"], None, "{PICDIR}/reditelstvi_dobrych_taktik.png"],
-    ]
-
     # Trackuje botuv VC (muze byt vzdy pripojen pouze do jednoho VC najednou)
     currentVoiceClient  = None
 
     async def on_message(self, message):
-        # Nezajimame se o sebe
-        if message.author == bot.user:
+        # Nezajimame se o boty
+        if message.author.bot:
             return
-
-        # Pouze Dotari dostavaji dota reference, pokud nadavaji/mluvi sproste
-        rspnsList = curseRspnsList
-        for role in message.author.roles:
-            if role.id == discordID["Dotar"]:
-                rspnsList = curseDotaRspnsList
-                break
-
-        # Checkneme sprosta slova
-        for word in cursesList:
-            # Pokud se ve zprave nachazi sproste slovo, zasleme odpoved
-            if word in message.content.lower():
-                # Nekdy muzeme zaslat personalizovanou odpoved
-                if await self._check_responses(message, self.personalResponses):
-                    break
-
-                await message.channel.send("{0.mention} {1}".format(
-                    message.author,
-                    choice(rspnsList),
-                ))
-                break
-
         await self.process_commands(message)
-
-
-    async def _check_responses(self, message, argsList: list) -> bool:
-        """
-        Wrapper kolem `_response()`.
-        Funguje pouze na nadavky
-        """
-        for arg in argsList:
-            if await self._response(message, *arg):
-                return True
-        return False
-
-
-    async def _response(self, messageObj, ID: int, message: str, fileName: str) -> bool:
-        """
-        `ID` - ID cloveka, kteremu odpovidame
-        `messageObj` - objekt zpravy, ktery je dan botovi, pokud nekdo neco napise
-        `message` - to, co rekne bot (muze byt None)
-        `fileName` - soubor, ktery bot posle (muze byt None)
-
-        Vraci True, pokud jsme poslali personalizovanou zpravu, jinak False.
-        """
-        message = "" if message is None else message
-
-        if messageObj.author.id == ID and randint(1,rngMax) == 1 \
-        and (message is not None or fileName is not None):
-            fileName = discord.File(fileName) if fileName is not None else None
-            await messageObj.channel.send(
-                f"{messageObj.author.mention} {message}",
-                file=fileName
-            )
-            return True
-        return False
 
 
     def play(self, filename: str) -> None:
@@ -217,18 +134,11 @@ class BotWrapper(commands.Bot):
 
 
 ## GLOBAL SPACE ################################################################
-
 _hlaskyFName         = f"{TXTDIR}/hlasky"
-_cursesFName         = f"{TXTDIR}/curses"
 _rejoinFName         = f"{TXTDIR}/rejoin"
-_curseRspnsFName     = f"{TXTDIR}/cursesResponse"
-_curseDotaRspnsFName = f"{TXTDIR}/cursesResponseDota"
 
 hlaskyList = _get_list(_hlaskyFName)
-cursesList = _get_list(_cursesFName)
 rejoinList = _get_list(_rejoinFName)
-curseRspnsList     = _get_list(_curseRspnsFName)
-curseDotaRspnsList = _get_list(_curseDotaRspnsFName) + curseRspnsList
 
 audioDict  = _get_dict(f"{AUDIODIR}")
 
@@ -241,11 +151,8 @@ bot = BotWrapper(command_prefix=PREFIX, description=DESC, activity=activity)
 async def on_connect():
     print("Startup latency: {}ms\n".format(int(bot.latency * 1000)))
     print(f"hlaskyList:         {len(hlaskyList)}")
-    print(f"cursesList:         {len(cursesList)}")
     print(f"rejoinList:         {len(rejoinList)}")
     print(f"audioDict:          {len(audioDict)}")
-    print(f"curseRspnsList:     {len(curseRspnsList)}")
-    print(f"curseDotaRspnsList: {len(curseDotaRspnsList)}")
     print("\nAUDIO:")
     print("  " + _format_audio().replace("\n", "\n  "))
 
