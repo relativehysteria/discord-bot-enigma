@@ -1,4 +1,3 @@
-from discordID import discordID
 from discord.ext import commands
 from discord import Game
 
@@ -10,6 +9,5 @@ AUDIODIR   = "audio"
 HLASKYPATH = "txt/hlasky"
 REJOINPATH = "txt/rejoin"
 FILEEXT    = "||"
-ADMIN_ID   = [discordID["Ruziro"], discordID["Dement"]]
 NEWLINE    = "NEWLINE"
 SOCKETPORT = 11337

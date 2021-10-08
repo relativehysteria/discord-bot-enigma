@@ -5,7 +5,6 @@ from time import strftime
 
 import discord
 from discord.ext import commands
-from discordID import discordID
 
 from bot import BotWrapper
 from utils import format_audio
