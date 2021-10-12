@@ -19,9 +19,9 @@ async def on_connect():
     print("Startup latency: {}ms\n".format(int(bot.latency * 1000)))
     print(f"hlaskyList:         {len(bot.hlaskyList)}")
     print(f"rejoinList:         {len(bot.rejoinList)}")
-    print(f"audioDict:          {len(bot.audioDict)}")
+    print(f"audioList:          {len(bot.audioList)}")
     print("\nAUDIO:")
-    print("  " + format_audio(bot.audioDict).replace("\n", "\n  "))
+    print("  " + format_audio(bot.audioList).replace("\n", "\n  "))
 
 @bot.event
 async def on_ready():
@@ -90,7 +90,7 @@ async def naga(context, *args):
     if len(args) == 0:
         message  = "Příklad: `bota naga 3`\n"
         message +=  '```\n'
-        message += format_audio(bot.audioDict)
+        message += format_audio(bot.audioList)
         message += '```'
 
         await context.send(message)
