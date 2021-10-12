@@ -96,6 +96,11 @@ async def naga(context, *args):
         await context.send(message)
         return
 
+    if args[0] == random:
+        randomNumber = choice(list(dic.items()))[0]
+        bot.play(randomNumber)
+        return
+
     bot.play(args[0])
 
 
