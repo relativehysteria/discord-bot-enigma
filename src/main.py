@@ -97,7 +97,7 @@ async def naga(context, *args):
         await context.send(message)
         return
 
-    if args[0] == random:
+    if args[0] == "random":
         randomNumber = randint(1, len(bot.audioList) + 1)
         bot.play(randomNumber)
         return
