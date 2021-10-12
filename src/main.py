@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from random import choice
+from random import randint
 from time import gmtime
 from time import strftime
 
@@ -97,7 +98,7 @@ async def naga(context, *args):
         return
 
     if args[0] == random:
-        randomNumber = choice(list(dic.items()))[0]
+        randomNumber = randint(1, len(bot.audioList) + 1)
         bot.play(randomNumber)
         return
 
