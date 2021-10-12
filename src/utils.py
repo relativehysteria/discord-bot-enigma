@@ -1,15 +1,14 @@
 import os
 
-def format_audio(audioDict: dict) -> str:
+def format_audio(audioList: list) -> str:
     """
-    Naformatuje hodnotu vracenou z `get_dict()` tak, aby to bylo citelne.
+    Naformatuje hodnotu vracenou z `get_dir()` tak, aby to bylo citelne.
     Pouziva to `bota naga`
     """
     message = ""
-    for key in audioDict.keys():
-        value = audioDict[key]
+    for (idx, value) in enumerate(audioList, start=1):
         value = value.replace(".mp3", "").replace("_", " ")
-        message += f"{key}: {value}\n"
+        message += f"{idx}: {value}\n"
     return message
 
 
@@ -31,16 +30,14 @@ def get_list(file):
     return getList
 
 
-def get_dict(directory):
+def get_dir(directory):
     """
-    Nacte soubory z nejakeho adresare do dictu a prilozi jim ID.
+    Nacte soubory z nejakeho adresare do listu a prilozi jim ID.
     Pouziva to `bota naga`
     """
-    getDict = dict()
-    counter = 1
+    getList = []
 
     for i in sorted_ls(directory):
-        getDict[counter] = i
-        counter += 1
+        getList.append(i)
 
-    return getDict
+    return getList

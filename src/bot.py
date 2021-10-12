@@ -6,7 +6,7 @@ from time import strftime
 import discord
 from discord.ext import commands
 
-from utils import get_list, get_dict
+from utils import get_list, get_dir
 from settings import *
 
 
@@ -16,7 +16,7 @@ class BotWrapper(commands.Bot):
 
     hlaskyList = get_list(f"{HLASKYPATH}")
     rejoinList = get_list(f"{REJOINPATH}")
-    audioDict  = get_dict(f"{AUDIODIR}")
+    audioList  = get_dir(f"{AUDIODIR}")
 
     async def on_message(self, message):
         # Nezajimame se o boty
@@ -33,7 +33,7 @@ class BotWrapper(commands.Bot):
             self.currentVoiceClient.stop()
 
         try:
-            filename = self.audioDict[int(filename)]
+            filename = self.audioList[int(filename)-1]
         except:
             filename = filename
 
