@@ -11,5 +11,16 @@ za sebou. A taky sebe... Ale nechal jsem tam `marek_complexity_three.png`, což
 je klassiker. Všechny discord ID jsem taky dal do `discordID.py`, který jsem na
 GitHub nedal, abych nezveřejňoval něčí ID, což? :>
 
-Licence je restriktivní abych počachral Dominikovu zahrádku. Pokud mi tenhle kód
-zkopíruje a nerozdělí se, tak ho budu žalovat.
+
+### Kvalita kódu
+
+Tohle byl můj druhý discord bot. Recykloval jsem spoustu kódu z toho prvního,
+který byl napsaný poměrně hodně velmi moc dost špatně -- tato kvalita se
+odrazila i na tomto botovi.. 
+
+V každém případě, můj třetí a nejpoužívanější bot,
+[Nāga](https://github.com/relativehysteria/naga),
+byl nakonec kompletně přepsán, takže tam už se to zlepšilo. :)
+
+Hlavní rozdíl mezi Enigmou a Nāgou je ten, že Enigma je standalone bot, zatímco
+Nāga je cog.
